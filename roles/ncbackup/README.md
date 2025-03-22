@@ -14,7 +14,7 @@ Requirements:
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
