@@ -1,0 +1,16 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  become: yes
+  vars:
+    ftp_server_password: testowy1
+    ftp_server_user: user1
+  tasks:
+    - name: Create directory for ftp
+      ansible.builtin.file:
+        name: /backup
+        state: directory
+    - name: include role
+      ansible.builtin.import_role:
+        name: servers

@@ -1,0 +1,12 @@
+---
+nextcloud_noip_url: https://www.noip.com/download/linux/latest
+# nextcloud_noip_version: 3.3.0
+nextcloud_domain: "{{ undef() }}"
+nextcloud_user: "{{ undef() }}"
+nextcloud_monit: true
+nextcloud_noip: true
+nextcloud_noip_secret:
+  - NOIP_USERNAME: ""
+  - NOIP_PASSWORD: ""
+  - NOIP_HOSTNAMES: ""
+nextcloud_noip_recreate_secret: false

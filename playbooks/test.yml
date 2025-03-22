@@ -1,0 +1,9 @@
+---
+- name: test
+  hosts: localhost
+  gather_facts: false
+  # become: yes
+  tasks:
+    - name: test_lookup
+      debug:
+        msg: "{{ lookup('torie_coding.keepass.lookup', 'entry', database='/home/kacior/nextcloud/Documents/Hasła.kdbx', database_password='@4techEVOlution', group_path='Homelab', title='backup', recursive=True) }}"

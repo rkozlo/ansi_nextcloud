@@ -1,0 +1,37 @@
+---
+ncbackup_local_user: ncbackup
+ncbackup_cron:
+  hour: "10"
+  minute: "5"
+  weekday: "6"
+  month: "*"
+  day: "*"
+  job: "/home/ncbackup/backup/backup_nextcloud.sh /home/ncbackup/backup/backup.env | logger -s -t nextcloud-backup"
+ncbackup_ftp: false
+
+# vars in env file
+ncbackup_backup_db_port: 3306
+ncbackup_backup_db_secret: "{{ lookup('torie_coding.keepass.lookup', 'entry', database=keepass_file, database_password=keepass_password, group_path=keepass_group_path, title=keepass_title, recursive=True) }}"
+ncbackup_backup_db_user: "{{ ncbackup_backup_db_secret['username'] }}"
+ncbackup_backup_db_passwod: "{{ ncbackup_backup_db_secret['password'] }}"
+ncbackup_ftp_user: ""
+ncbackup_ftp_password: ""
+ncbackup_mac_remote: "{{ undef() }}"
+ncbackup_announce_user: "{{ undef() }}"
+ncbackup_ssh_user: "{{ undef() }}"
+ncbackup_snapshot_size: 10G
+ncbackup_enabled: 1
+ncbackup_announce: 1
+ncbackup_rotate: 1
+ncbackup_min_days_rotate: 15
+ncbackup_backup_count: 2
+ncbackup_type: rsync
+ncbackup_ssh_user: ncbackup
+ncbackup_remote_dir: /backup/nextcloud
+ncbackup_remote_host: backup
+ncbackup_www_dir: /var/www/nextcloud
+ncbackup_lv_db: nc-mariadb
+ncbackup_lv_nextcloud: nc-storage
+ncbackup_vg_name: storage
+ncbackup_backup_dir: "/backup"
+ncbackup_remote_backup_dir: "/backup"

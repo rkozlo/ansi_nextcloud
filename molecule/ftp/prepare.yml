@@ -1,0 +1,10 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  become: yes
+  tasks:
+    - name: Bootstrap python dla ansible
+      ansible.builtin.raw:
+        zypper in -y python311
+      become: true

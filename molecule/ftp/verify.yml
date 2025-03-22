@@ -1,0 +1,21 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  become: yes
+  tasks:
+    - name: Check container
+      containers.podman.podman_container_info:
+        name: ftp-backup
+      register: container_info
+    
+    - name: Check ftp connection
+      ansible.builtin.wait_for:
+        host: localhost
+        port: 21
+        timeout: 3
+      register: result
+    - name: Display the connection result
+      debug:
+        var: result
+    

@@ -1,0 +1,13 @@
+---
+- name : Include tasks 
+  ansible.builtin.apt:
+    name: podman
+    state: present
+- name: Include tasks for noip
+  ansible.builtin.include_tasks: noip.yml
+  when: nextcloud_noip
+
+- name: Include tasks for monitoring
+  ansible.builtin.include_tasks: monit.yml
+  when: nextcloud_monit
+

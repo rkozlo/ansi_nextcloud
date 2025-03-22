@@ -1,0 +1,9 @@
+---
+- name: backup
+  hosts: nextcloud
+  gather_facts: false
+  become: yes
+  tasks:
+    - name: include role
+      ansible.builtin.import_role:
+        name: nextcloud

@@ -1,0 +1,11 @@
+---
+- name: debian | Install debian packages
+  ansible.builtin.apt:
+    name: etherwake
+    state: present
+
+- name: debian | Install lftp
+  ansible.builtin.apt:
+    name: lftp
+    state: present
+  when: ncbackup_type == 'ftp'

@@ -1,0 +1,36 @@
+---
+- name: noip | Create noip secret
+  containers.podman.podman_secret:
+    state: present
+    name: "{{ __secret.key }}"
+    data: "{{ __secret.value }}"
+    skip_existing: true
+    force: "{{ nextcloud_noip_recreate_secret }}"
+  loop: "{{ nextcloud_noip_secret | dict2items }}"
+  loop_control:
+    label: "{{ __secret.key }}"
+    loop_var: __secret
+
+- name: noip | Create noip container
+  containers.podman.podman_container:
+    name: noip-duc
+    image: ghcr.io/noipcom/noip-duc:latest
+    state: created
+    secrets:
+      - NOIP_USERNAME,type=env,target=NOIP_USERNAME
+      - NOIP_PASSWORD,type=env,target=NOIP_PASSWORD
+      - NOIP_HOSTNAMES,type=env,target=NOIP_HOSTNAMES
+    generate_systemd:
+      restart: on-failure
+      type: simple
+      after:
+        - network.target
+        - auditd.service
+      path: /etc/systemd/system/
+
+- name: noip | Start noip container
+  ansible.builtin.systemd_service:
+    name: container-noip-duc
+    state: started
+    enabled: true
+    daemon-reload: true

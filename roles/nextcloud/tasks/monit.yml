@@ -1,0 +1,26 @@
+---
+- name: monit | Check variables
+  ansible.builtin.assert:
+    that:
+      - nextcloud_domain is defined
+      - nextcloud_user is defined
+
+- name: monit | Copy cert monit script to host
+  ansible.builtin.copy:
+    src: ../files/cert_monit.sh
+    dest: /usr/libexec/certmonit.sh
+    owner: root
+    group: root
+    mode: "744"
+
+- name: monit | Create cron entry for cert monit
+  ansible.builtin.cron:
+    name: certificate-monitor
+    user: root
+    minute: "0"
+    hour: "13"
+    day: "*"
+    weekday: "1"
+    month: "*"
+    job: "/usr/libexec/certmonit.sh {{ nextcloud_domain }} {{ nextcloud_user }} | logger -s -t certmonit"
+    

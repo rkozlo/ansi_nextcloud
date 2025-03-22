@@ -1,0 +1,65 @@
+---
+- name: Create ncbackup user
+  ansible.builtin.user:
+    name:  "{{ ncbackup_local_user }}"
+    groups:
+      - www-data
+    create_home: yes
+
+- name: Copy backup script
+  ansible.builtin.copy:
+    src: ../files/backup_nextcloud.sh
+    dest: /home/ncbackup/backup/backup_nextcloud.sh
+    mode: "0740"
+    owner: "{{ ncbackup_local_user }}"
+    group: "{{ ncbackup_local_user }}"
+
+- name: Copy env for backup
+  ansible.builtin.template:
+    src: ../files/backup.env.j2
+    dest: /home/ncbackup/backup/backup.env
+    mode: "0740"
+    owner: ncbackup
+    group: ncbackup
+
+- name: Add sudoers for ncbackup-root
+  community.general.sudoers:
+    name: "{{ ncbackup_local_user }}-root"
+    state: present
+    user: "{{ ncbackup_local_user }}"
+    nopassword: true
+    sudoers_path: /etc/sudoers.d/
+    runas: root
+    commands:
+      - /usr/sbin/etherwake
+      - /usr/bin/mysqldump
+      - /usr/sbin/lvcreate
+      - /usr/bin/mount
+      - /usr/bin/umount
+      - /usr/sbin/lvremove
+      
+- name: Add sudoers for ncbackup-php
+  community.general.sudoers:
+    name: "{{ ncbackup_local_user }}-php"
+    state: present
+    user: "{{ ncbackup_local_user }}"
+    nopassword: true
+    sudoers_path: /etc/sudoers.d/
+    runas: www-data
+    commands:
+      - /usr/bin/php /var/www/nextcloud/occ maintenance*
+      - /usr/bin/php /var/www/nextcloud/occ notification*
+
+- name: Install packages
+  ansible.builtin.include_tasks: "{{ ansible_os_family | lower }}.yml"
+
+- name: Add job to cron
+  ansible.builtin.cron:
+    name: "ncbackup"
+    user: "{{ ncbackup_local_user }}"
+    minute: "{{ ncbackup_cron['minute'] }}"
+    hour: "{{ ncbackup_cron['hour'] }}"
+    day: "{{ ncbackup_cron['day'] }}"
+    weekday: "{{ ncbackup_cron['weekday'] }}"
+    month: "{{ ncbackup_cron['month'] }}"
+    job: "{{ ncbackup_cron['job'] }}"
