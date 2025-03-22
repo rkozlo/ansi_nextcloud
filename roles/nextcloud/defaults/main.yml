@@ -6,7 +6,7 @@ nextcloud_user: "{{ undef() }}"
 nextcloud_monit: true
 nextcloud_noip: true
 nextcloud_noip_secret:
-  - NOIP_USERNAME: ""
-  - NOIP_PASSWORD: ""
-  - NOIP_HOSTNAMES: ""
+  NOIP_USERNAME: ""
+  NOIP_PASSWORD: ""
+  NOIP_HOSTNAMES: ""
 nextcloud_noip_recreate_secret: false
