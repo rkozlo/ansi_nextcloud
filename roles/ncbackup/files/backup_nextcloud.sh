@@ -21,6 +21,7 @@
 # backup_count=2
 # backup_type=rsync
 # snaphot_size=10G
+# web_server_conf=/etc/apache2
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
@@ -155,6 +156,30 @@ if [[ "$backup" -eq 1 ]]; then
   fi
   [[ $db_status != 0 ]] && backup_exception "Database backup error!" 9
   m_ok "Database backed up."
+
+  if [[ "$backup_type" == "ftp" ]]; then
+    m_normal "Backing up php config over ftp."
+    lftp -u ${ftp_user},${ftp_pass} $remote_host -e "mirror -R ${www_dir}/config/ ${remote_curr_backup_dir}/config/; bye"
+    config_php_status=$?
+  elif [[ "$backup_type" == "rsync" ]]; then
+    m_normal "Backing up php config over ftp."
+    rsync -aA ${www_dir}/config/* ${ssh_user}@${remote_host}:${remote_curr_backup_dir}/config/
+    config_php_status=$?
+  fi
+  [[ $config_php_status != 0 ]] && backup_exception "Php config backup error!" 11
+  m_ok "Php config backed up."
+  
+  if [[ "$backup_type" == "ftp" ]]; then
+    m_normal "Backing up www server config over ftp."
+    lftp -u ${ftp_user},${ftp_pass} $remote_host -e "mirror -R ${web_server_conf} ${remote_curr_backup_dir}/www_config/; bye"
+    config_www_status=$?
+  elif [[ "$backup_type" == "rsync" ]]; then
+    m_normal "Backing up php config over ftp."
+    rsync -aA ${web_server_conf}/* ${ssh_user}@${remote_host}:${remote_curr_backup_dir}/www_config/
+    config_www_status=$?
+  fi
+  [[ $config_www_status != 0 ]] && backup_exception "Web server config backup error!" 11
+  m_ok "Web server config backed up."
 
   if [[ "$backup_type" == "ftp" ]]; then
     m_normal "Backing up storage over ftp."

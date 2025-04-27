@@ -35,3 +35,4 @@ ncbackup_lv_nextcloud: nc-storage
 ncbackup_vg_name: storage
 ncbackup_backup_dir: "/backup"
 ncbackup_remote_backup_dir: "/backup"
+ncbackup_www_config: /etc/apache2
